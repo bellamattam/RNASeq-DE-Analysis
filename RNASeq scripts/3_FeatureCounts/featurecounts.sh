@@ -18,4 +18,4 @@ BAM_FILES=/data/courses/rnaseq/toxoplasma_de/mapping/*.sorted.bam
 
 module add UHTS/Analysis/subread/2.0.1
 
-featureCounts -p -s 2 -a $ANNOTATION -o $OUTPUT $BAM_FILES
+featureCounts -p -s 2 -a $ANNOTATION -o $OUTPUT $BAM_FILES 
