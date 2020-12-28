@@ -1,0 +1,17 @@
+# Building the results tables for pairwise contrast
+lung_res <- DESeq2::results(dds, contrast=c("condition", "Lung_WT_Case","Lung_WT_Control"))
+blood_res <- DESeq2::results(dds, contrast=c("condition", "Blood_WT_Case","Blood_WT_Control"))
+
+# View number of differentially expressed genes
+sum(lung_res$padj < 0.05, na.rm=TRUE)
+sum(blood_res$padj < 0.05, na.rm=TRUE)
+
+# View summary of results
+DESeq2::summary(lung_res)
+DESeq2::summary(blood_res)
+
+# Plot expression level of tap1,Sat1,Sat2
+par(mfrow=c(1,3))
+plotCounts(dds, gene="ENSMUSG00000037321", normalized = TRUE)
+plotCounts(dds, gene="ENSMUSG00000040033", normalized = TRUE)
+plotCounts(dds, gene="ENSMUSG00000026104", normalized = TRUE)
