@@ -1,0 +1,47 @@
+#install packages
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("clusterProfiler")
+
+library(org.Mm.eg.db)
+
+# Extract Ensembl IDs differentially expressed genes 
+sig_lung <- rownames( lung_res[!is.na(lung_res$padj) & lung_res$padj<.05,] )
+sig_blood <- rownames( blood_res[!is.na(blood_res$padj) & blood_res$padj<.05,] )
+
+# Extract Ensembl IDs of all genes
+all_lung <- rownames(lung_res)
+all_blood <- rownames(blood_res)
+
+# Overrepresentation analysis: blood
+ego_blood <- clusterProfiler::enrichGO(
+                gene          = sig_blood,
+                universe      = all_blood,
+                OrgDb         = org.Mm.eg.db,
+                ont           = "BP",
+                keyType       = "ENSEMBL",
+                readable      = TRUE)
+
+# Save results to file
+cluster_summary_blood <- data.frame(ego_blood)
+write.csv2(cluster_summary_blood, "cluster_summary_blood.csv2")
+
+# Overrepresentation analysis: lung
+ego_lung <- clusterProfiler::enrichGO(
+                gene          = sig_lung,
+                universe      = all_lung,
+                OrgDb         = org.Mm.eg.db,
+                ont           = "BP",
+                keyType       = "ENSEMBL",
+                readable      = TRUE)
+
+# Save results to file
+cluster_summary_lung <- data.frame(ego_lung)
+write.csv2(cluster_summary_lung, "cluster_summary_lung.csv2")
+
+# Plot results:
+
+# Barplot
+barplot(ego_blood)
+barplot(ego_lung)
