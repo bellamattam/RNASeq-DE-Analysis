@@ -1,0 +1,28 @@
+# Install these packages
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("DESeq")
+
+# Read adjusted file resulting from featureCounts
+counts <- read.table("counts.txt", sep = "\t", row.names = "Geneid", header = TRUE)
+
+# Specify experimental group for each sample
+condition <- factor(c(rep("Lung_WT_Case", 5), rep("Lung_WT_Control", 3), rep("Blood_WT_Case", 5), rep("Blood_WT_Control", 3)))
+
+coldata <- data.frame(row.names = colnames(counts), condition)
+
+# Create DESeqDataSet object
+DESeqDataSet <- DESeq2::DESeqDataSetFromMatrix(
+                        countData = counts,
+                        colData = coldata,
+                        design = ~ condition)
+
+# Differential expression analysis
+dds <- DESeq2::DESeq(DESeqDataSet)
+
+# Transform dds to remove dependence of the variance on the mean
+rlog_dds <- DESeq2::rlog(dds)
+
+# Principal components analysis(PCA) plot
+DESeq2::plotPCA(rlog_dds)
